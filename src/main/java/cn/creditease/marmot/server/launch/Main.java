@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.InetAddress;
+import java.net.Socket;
 
 @Parameters(separators = "=")
 public class Main {
@@ -71,14 +73,14 @@ public class Main {
       }
     }
 
-    main.start();
+    main.run(main.host, main.port, main.resourceBase, logsDir);
   }
 
   /**
-   * 启动server
+   * 运行 jetty server
    * @throws Exception
    */
-  private void start() throws Exception {
+  public void run(String host, int port, String resourceBase, String logs) throws Exception {
     Server server = new Server(createThreadPool());
 
     MBeanContainer mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
@@ -86,29 +88,27 @@ public class Main {
 
     ServerConnector connector = new ServerConnector(server);
 
-    connector.setPort(this.port);
-    connector.setHost(this.host);
+    connector.setPort(port);
+    connector.setHost(host);
 
     server.addConnector(connector);
-    server.setHandler(createHandlers());
+    server.setHandler(createHandlers(resourceBase, logs));
 
     server.start();
     server.join();
   }
 
-  private void stop(String host, int port) throws IOException {
-
-  }
-
   /**
    * 返回需要添加到server的处理器
+   * @param resourceBase webapp路径
+   * @param logs 日志输出路径
    * @return handler collection
    */
-  private HandlerCollection createHandlers() {
+  private HandlerCollection createHandlers(String resourceBase, String logs) {
     HandlerCollection handlers = new HandlerCollection();
     handlers.setHandlers(new Handler[]{
-      createWebApp(this.resourceBase),
-      createAccessLog(this.resourceBase + File.separator + this.logs),
+      createWebApp(resourceBase),
+      createAccessLog(logs),
     });
 
     return handlers;
