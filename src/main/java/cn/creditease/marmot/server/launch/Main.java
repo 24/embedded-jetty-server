@@ -1,3 +1,4 @@
+
 package cn.creditease.marmot.server.launch;
 
 import com.beust.jcommander.JCommander;
@@ -19,8 +20,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.net.InetAddress;
-import java.net.Socket;
+
+/**
+ * embedded jetty server
+ * @author aiweizhang(aiweizhang@creditease.cn)
+ */
 
 @Parameters(separators = "=")
 public class Main {
