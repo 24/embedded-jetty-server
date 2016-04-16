@@ -5,12 +5,14 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import org.eclipse.jetty.jmx.MBeanContainer;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.NCSARequestLog;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
+import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.servlets.gzip.GzipHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
@@ -53,7 +55,7 @@ public class Main {
     }
 
     // 检查端口号是否是一个有效的值
-    if (main.port < 0 || main.port > 65536) {
+    if (main.port < 0 || main.port >= 65536) {
       throw new IllegalArgumentException("invalid port number: " + main.port);
     }
 
@@ -90,7 +92,10 @@ public class Main {
     MBeanContainer mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
     server.addBean(mbContainer);
 
-    ServerConnector connector = new ServerConnector(server);
+    HttpConfiguration httpConfig = new HttpConfiguration();
+    httpConfig.setSendServerVersion(false);
+
+    ServerConnector connector = new ServerConnector(server, new HttpConnectionFactory(httpConfig));
 
     connector.setPort(port);
     connector.setHost(host);
@@ -111,8 +116,8 @@ public class Main {
   private HandlerCollection createHandlers(String resourceBase, String logs) {
     HandlerCollection handlers = new HandlerCollection();
     handlers.setHandlers(new Handler[]{
-      createWebApp(resourceBase),
       createAccessLog(logs),
+      webappGzipWrapper(createWebApp(resourceBase))
     });
 
     return handlers;
@@ -138,12 +143,11 @@ public class Main {
    */
   private WebAppContext createWebApp(String resourceBase) {
     WebAppContext webapp = new WebAppContext();
+
     webapp.setContextPath("/");
     webapp.setResourceBase(resourceBase);
     // not allow accessing directory
     webapp.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
-    // support gzip
-    webapp.setHandler(createGzip());
 
     return webapp;
   }
@@ -174,7 +178,7 @@ public class Main {
    * 创建gzip处理器
    * @return gzip handler
    */
-  private GzipHandler createGzip() {
+  private GzipHandler webappGzipWrapper(WebAppContext webapp) {
     GzipHandler gzipHandler = new GzipHandler();
     gzipHandler.setMinGzipSize(1024);
     gzipHandler.addIncludedMimeTypes(
@@ -187,6 +191,7 @@ public class Main {
       "application/xml",
       "image/svg+xml"
     );
+    gzipHandler.setHandler(webapp);
 
     return gzipHandler;
   }
