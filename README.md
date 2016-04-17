@@ -4,13 +4,13 @@ This is a maven project.
 
 使用maven构建:
 
-```
+```shell
 $ mvn clean compile assembly:single
 ```
 
 使用构建好的jar包启动:
 
-```
+```shell
 $ java -jar /path/to/embedded-jetty-server-package.jar --webapp=/path/to/project
 ```
 
