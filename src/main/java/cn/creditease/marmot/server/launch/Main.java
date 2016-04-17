@@ -25,7 +25,6 @@ import java.lang.management.ManagementFactory;
 
 /**
  * embedded jetty server
- * @author aiweizhang(aiweizhang@creditease.cn)
  */
 
 @Parameters(separators = "=")
