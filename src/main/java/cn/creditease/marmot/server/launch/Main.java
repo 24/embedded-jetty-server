@@ -32,7 +32,7 @@ public class Main {
   private int port = 8080;
 
   @Parameter(names = {"--host", "-H"}, description = "specify host")
-  private String host = "127.0.0.1";
+  private String host = "0.0.0.0";
 
   @Parameter(names = {"--webapp", "-w"}, description = "webapp directory")
   private String resourceBase;
