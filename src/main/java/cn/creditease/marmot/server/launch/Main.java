@@ -123,8 +123,8 @@ public class Main {
   private HandlerCollection createHandlers(String resourceBase, String logs) {
     HandlerCollection handlers = new HandlerCollection();
     handlers.setHandlers(new Handler[]{
-            createAccessLog(logs),
-            webappGzipWrapper(createWebApp(resourceBase))
+      createAccessLog(logs),
+      webappGzipWrapper(createWebApp(resourceBase))
     });
 
     return handlers;
@@ -197,14 +197,14 @@ public class Main {
     GzipHandler gzipHandler = new GzipHandler();
     gzipHandler.setMinGzipSize(1024);
     gzipHandler.addIncludedMimeTypes(
-            "text/html",
-            "text/htm",
-            "application/json",
-            "application/javascript",
-            "application/x-javascript",
-            "text/css",
-            "application/xml",
-            "image/svg+xml"
+      "text/html",
+      "text/htm",
+      "application/json",
+      "application/javascript",
+      "application/x-javascript",
+      "text/css",
+      "application/xml",
+      "image/svg+xml"
     );
     gzipHandler.setHandler(webapp);
 
