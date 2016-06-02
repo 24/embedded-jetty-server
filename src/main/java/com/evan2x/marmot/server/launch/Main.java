@@ -1,5 +1,5 @@
 
-package cn.creditease.marmot.server.launch;
+package com.evan2x.marmot.server.launch;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -26,7 +26,7 @@ import java.lang.management.ManagementFactory;
 
 /**
  * embedded jetty server
- * @author aiweizhang(aiweizhang@creditease.cn)
+ * @author evan2x(evan2zaw@gmail.com)
  */
 
 @Parameters(separators = "=")
